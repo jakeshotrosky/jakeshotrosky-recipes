@@ -1,0 +1,26 @@
+Description: Downloads the current release version of R
+Identifier: com.github.jakeshotrosky.download.R
+MinimumVersion: 2.3.0
+
+Input:
+  NAME: R
+  ARCH: arm64
+
+Process:
+- Processor: RProjectURLProvider
+  Arguments:
+    architecture: '%ARCH%'
+
+- Processor: URLDownloader
+  Arguments:
+    filename: '%NAME%_%ARCH%-%version%.pkg'
+
+- Processor: EndOfCheckPhase
+
+- Processor: CodeSignatureVerifier
+  Arguments:
+    expected_authority_names:
+    - 'Developer ID Installer: Simon Urbanek (VZLD955F6P)'
+    - Developer ID Certification Authority
+    - Apple Root CA
+    input_path: '%pathname%'

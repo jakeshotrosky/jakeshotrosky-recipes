@@ -1,0 +1,19 @@
+Description: Downloads the latest RStudio disk image and builds a package. The installer package includes a preinstall script that will check for an existing RStudio.app in /Applications and remove it if found.
+Identifier: com.github.jakeshotrosky.pkg.RStudio
+ParentRecipe: com.github.jakeshotrosky.download.RStudio
+MinimumVersion: 2.3.0
+
+Input:
+  NAME: RStudio
+
+Process:
+- Processor: AppDmgVersioner
+  Arguments:
+    dmg_path: '%pathname%'
+
+- Processor: com.github.homebysix.VersionSplitter/VersionSplitter
+  Arguments:
+    split_on: +
+    version: '%version%'
+
+- Processor: AppPkgCreator

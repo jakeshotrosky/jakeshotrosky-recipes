@@ -1,0 +1,40 @@
+Identifier: com.github.jakeshotrosky.jamf.OpenJDK
+ParentRecipe: com.github.jakeshotrosky.pkg.OpenJDK
+MinimumVersion: 2.3.0
+
+Input:
+  NAME: OpenJDK
+  CATEGORY: Developer
+  GROUP_NAME: Self Service - Access Developer Apps
+  POLICY_CATEGORY: Developer
+  POLICY_NAME: Install Latest %NAME%
+  POLICY_TEMPLATE: ScopedPolicyTemplate.xml
+  SELF_SERVICE_DESCRIPTION: An Open License version of JDK.
+  SELF_SERVICE_DISPLAY_NAME: Install Latest %NAME%
+  SELF_SERVICE_ICON: '%NAME%.png'
+  TESTING_GROUP_NAME: Testing
+  UPDATE_PREDICATE: pkg_uploaded == False
+
+Process:
+- Processor: com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader
+  Arguments:
+    category_name: '%CATEGORY%'
+
+- Processor: com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader
+  Arguments:
+    category_name: '%POLICY_CATEGORY%'
+
+- Processor: com.github.grahampugh.jamf-upload.processors/JamfPackageUploader
+  Arguments:
+    pkg_category: '%CATEGORY%'
+
+- Processor: StopProcessingIf
+  Arguments:
+    predicate: '%UPDATE_PREDICATE%'
+
+- Processor: com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader
+  Arguments:
+    icon: '%SELF_SERVICE_ICON%'
+    policy_name: '%POLICY_NAME%'
+    policy_template: '%POLICY_TEMPLATE%'
+    replace_policy: 'True'

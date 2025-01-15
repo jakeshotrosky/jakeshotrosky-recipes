@@ -1,0 +1,20 @@
+Description: Downloads latest version of Viscosity.
+Identifier: com.github.jakeshotrosky.Viscosity.download
+MinimumVersion: 2.3.0
+
+Input:
+  NAME: Viscosity
+  DOWNLOAD_URL: https://www.sparklabs.com/downloads/Viscosity.dmg
+
+Process:
+- Processor: URLDownloader
+  Arguments:
+    filename: '%NAME%.dmg'
+    url: '%DOWNLOAD_URL%'
+
+- Processor: EndOfCheckPhase
+
+- Processor: CodeSignatureVerifier
+  Arguments:
+    input_path: '%pathname%/Viscosity.app'
+    requirement: anchor apple generic and identifier "com.viscosityvpn.Viscosity" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = "34XR7GXFPX")

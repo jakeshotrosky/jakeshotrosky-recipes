@@ -1,0 +1,37 @@
+Description: Downloads the latest version of Viscosity and creates a package.
+Identifier: com.github.jakeshotrosky.pkg.Viscosity
+ParentRecipe: com.github.jakeshotrosky.Viscosity.download
+MinimumVersion: 2.3.0
+
+Input:
+  NAME: Viscosity
+  PKG_ID: com.viscosityvpn.Viscosity
+
+Process:
+- Processor: PkgRootCreator
+  Arguments:
+    pkgdirs:
+      Applications: '0775'
+    pkgroot: '%RECIPE_CACHE_DIR%/%NAME%'
+
+- Processor: Copier
+  Arguments:
+    destination_path: '%pkgroot%/Applications/Viscosity.app'
+    source_path: '%RECIPE_CACHE_DIR%/downloads/%NAME%.dmg/Viscosity.app'
+
+- Processor: AppDmgVersioner
+  Arguments:
+    dmg_path: '%RECIPE_CACHE_DIR%/downloads/%NAME%.dmg'
+
+- Processor: PkgCreator
+  Arguments:
+    pkg_request:
+      chown:
+      - group: wheel
+        path: Applications
+        user: root
+      id: '%PKG_ID%'
+      options: purge_ds_store
+      pkgdir: '%RECIPE_CACHE_DIR%'
+      pkgname: '%NAME%-%version%'
+

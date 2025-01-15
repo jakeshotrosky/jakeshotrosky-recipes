@@ -1,0 +1,39 @@
+Identifier: com.github.jakeshotrosky.jamf.krisp
+ParentRecipe: com.github.jakeshotrosky.pkg.krisp
+MinimumVersion: 2.3.0
+
+Input:
+  NAME: krisp
+  CATEGORY: Utility
+  POLICY_CATEGORY: Utility
+  POLICY_NAME: Install Latest %NAME%
+  POLICY_TEMPLATE: OpenPolicyTemplate.xml
+  SELF_SERVICE_DESCRIPTION: AI-powered Noise Cancellation, Transcription and Meeting Notes
+  SELF_SERVICE_DISPLAY_NAME: Install Latest %NAME%
+  SELF_SERVICE_ICON: '%NAME%.png'
+  TESTING_GROUP_NAME: Testing
+  UPDATE_PREDICATE: pkg_uploaded == False
+
+Process:
+- Processor: com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader
+  Arguments:
+    category_name: '%CATEGORY%'
+
+- Processor: com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader
+  Arguments:
+    category_name: '%POLICY_CATEGORY%'
+
+- Processor: com.github.grahampugh.jamf-upload.processors/JamfPackageUploader
+  Arguments:
+    pkg_category: '%CATEGORY%'
+
+- Processor: StopProcessingIf
+  Arguments:
+    predicate: '%UPDATE_PREDICATE%'
+
+- Processor: com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader
+  Arguments:
+    icon: '%SELF_SERVICE_ICON%'
+    policy_name: '%POLICY_NAME%'
+    policy_template: '%POLICY_TEMPLATE%'
+    replace_policy: 'True'

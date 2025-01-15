@@ -1,0 +1,23 @@
+Description: Downloads the latest version of krisp
+Identifier: com.github.jakeshotrosky.download.krisp
+MinimumVersion: 2.3.0
+
+Input:
+  NAME: krisp
+
+Process:
+- Processor: URLDownloader
+  Arguments:
+    filename: '%NAME%.pkg'
+    url: https://download.krisp.ai/mac?package=package_arm
+    prefetch_filename: true
+
+- Processor: EndOfCheckPhase
+
+- Processor: CodeSignatureVerifier
+  Arguments:
+    expected_authority_names:
+    - 'Developer ID Installer: Krisp Technologies, Inc. (U5R26XM5Z2)'
+    - Developer ID Certification Authority
+    - Apple Root CA
+    input_path: '%pathname%'

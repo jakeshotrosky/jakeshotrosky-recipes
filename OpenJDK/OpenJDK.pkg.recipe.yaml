@@ -1,0 +1,54 @@
+Description: Downloads the current release version of OpenJDK and builds a package.
+Identifier: com.github.jakeshotrosky.pkg.OpenJDK
+ParentRecipe: com.github.jakeshotrosky.download.OpenJDK
+MinimumVersion: 2.3.0
+
+Input:
+  NAME: OpenJDK
+
+Process:
+- Processor: FileFinder
+  Arguments:
+    pattern: '%pkgroot%/Library/Java/JavaVirtualMachines/jdk*/Contents/Info.plist'
+
+- Processor: Versioner
+  Arguments:
+    input_plist_path: '%found_filename%'
+    plist_version_key: CFBundleShortVersionString
+
+- Processor: FileCreator
+  Arguments:
+    file_content: |
+      #!/bin/bash
+      
+      # Remove existing OpenJDK %version% installation
+      
+      version_number="%version%"
+      java_directory="$3/Library/Java/JavaVirtualMachines/jdk-$version_number.jdk"
+      
+      if [[ -d "$java_directory" ]]; then
+        rm -rf "$java_directory"
+      fi
+      
+      exit 0"
+    file_mode: '0755'
+    file_path: '%RECIPE_CACHE_DIR%/Scripts/preinstall'
+
+- Processor: PkgCreator
+  Arguments:
+    pkg_request:
+      chown:
+      - group: wheel
+        path: Library
+        user: root
+      - group: wheel
+        path: Library/Java
+        user: root
+      - group: wheel
+        path: Library/Java/JavaVirtualMachines
+        user: root
+      id: net.java.openjdk
+      options: purge_ds_store
+      pkgname: OpenJDK-%version%
+      scripts: Scripts
+      version: '%version%'
